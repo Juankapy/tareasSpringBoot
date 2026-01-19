@@ -5,7 +5,7 @@
 
 ## 2) Repositorio (fork) y gestión de versiones
 - Repositorio base: https://github.com/profeInformatica101/tareasSpringBoot
-- Enlace a MI fork: [PON AQUÍ EL ENLACE CUANDO LO CREES]
+- Enlace a MI fork: [https://github.com/Juankapy/tareasSpringBoot]
 - Nº de commits realizados: (mínimo 5)
 
 ## 3) Arquitectura
