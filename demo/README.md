@@ -17,7 +17,7 @@ Explica brevemente cómo has organizado:
 
 ## 4) Base de datos elegida (marca una)
 - [ ] H2
-- [ ] MySQL
+- [x] MySQL
 - [ ] PostgreSQL
 
 ## 5) Configuración de la base de datos
@@ -28,8 +28,34 @@ Explica brevemente cómo has organizado:
 (Pega aquí tu configuración SIN contraseñas reales si es necesario)
 
 ### 5.3 Pasos para crear la BD (si aplica)
-- MySQL: CREATE DATABASE ...
-- PostgreSQL: createdb ...
+- MySQL:
+- CREATE DATABASE IF NOT EXISTS musica_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+  USE musica_db;
+- CREATE TABLE IF NOT EXISTS albums (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  titulo VARCHAR(255) NOT NULL,
+  artista VARCHAR(255) NOT NULL,
+  anio_lanzamiento INT,
+  genero VARCHAR(100),
+  -- Restricción para evitar álbumes duplicados (mismo artista y título)
+  CONSTRAINT uk_titulo_artista UNIQUE (titulo, artista)
+  ) ENGINE=InnoDB;
+
+- CREATE TABLE IF NOT EXISTS canciones (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  titulo VARCHAR(255) NOT NULL,
+  duracion_segundos INT COMMENT 'Duración en segundos',
+  track_number INT COMMENT 'Número de pista en el álbum',
+  album_id BIGINT NOT NULL,
+  -- Clave Foránea: Relación Muchos a Uno con albums
+  -- ON DELETE CASCADE: Si se borra el álbum, se borran sus canciones
+  CONSTRAINT fk_canciones_album FOREIGN KEY (album_id)
+  REFERENCES albums(id)
+  ON DELETE CASCADE
+  ) ENGINE=InnoDB;
+
+- CREATE INDEX idx_cancion_album ON canciones(album_id);
+
 
 ## 6) Cómo ejecutar el proyecto
 1. Requisitos (Java versión, Maven/Gradle, DB instalada si aplica)
