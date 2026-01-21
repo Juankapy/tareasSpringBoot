@@ -93,8 +93,8 @@ spring.jpa.database-platform=org.hibernate.dialect.MySQL8Dialect
 
 
 ## 8) Mejoras extra (opcional)
-- Validaciones
+- Validaciones ✖️
 - Estilos Bootstrap ✔️
 - Búsqueda
-- Pruebas
-- Paginación
+- Pruebas ✖️
+- Paginación ✖️

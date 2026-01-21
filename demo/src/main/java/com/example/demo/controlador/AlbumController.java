@@ -1,57 +1,62 @@
 package com.example.demo.controlador;
+
 import com.example.demo.modelo.Album;
-import com.example.demo.repository.AlbumRepository; 
+import com.example.demo.service.AlbumService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 @RequestMapping("/albums")
 public class AlbumController {
 
     @Autowired
-    private AlbumRepository albumRepository;
-
-    // Listar todos los álbumes
-    // Ruta: GET /albums
+    private AlbumService albumService;
     @GetMapping
-    public String listarAlbums(Model model) {
-        // Buscamos todos los álbumes en la BD y los guardamos en el modelo
-        model.addAttribute("listaAlbums", albumRepository.findAll());
-        return "lista_albums"; // Esto busca el archivo lista_albums.html en templates
+    public String listar(@RequestParam(value = "texto", required = false) String texto, Model model) {
+        List<Album> todosLosDiscos = albumService.listarTodos();
+        if (texto == null || texto.isEmpty()) {
+            model.addAttribute("listaAlbums", todosLosDiscos);
+            return "lista_albums";
+        }
+        List<Album> listaFiltrada = new ArrayList<>();
+
+        for (Album album : todosLosDiscos) {
+            if (album.getTitulo().toLowerCase().contains(texto.toLowerCase())) {
+                listaFiltrada.add(album);
+            }
+        }
+
+        model.addAttribute("listaAlbums", listaFiltrada);
+        return "lista_albums";
     }
 
-    // Crear Album
-    // Ruta: GET /albums/nuevo
     @GetMapping("/nuevo")
     public String mostrarFormulario(Model model) {
         model.addAttribute("album", new Album());
         return "form_album";
     }
 
-    // Editar Album
-    // Ruta: GET /albums/editar/{id}
+    @PostMapping("/guardar")
+    public String guardarAlbum(@ModelAttribute Album album) {
+        albumService.guardar(album);
+        return "redirect:/albums";
+    }
+
     @GetMapping("/editar/{id}")
     public String editarFormulario(@PathVariable Long id, Model model) {
-        Album album = albumRepository.findById(id).orElse(null);
+        Album album = albumService.buscarPorId(id);
         model.addAttribute("album", album);
         return "form_album";
     }
 
-    // Guardar el álbum
-    // Ruta: POST /albums/guardar
-    @PostMapping("/guardar")
-    public String guardarAlbum(@ModelAttribute Album album) {
-        albumRepository.save(album);
-        return "redirect:/albums"; // Vuelve a la lista
-    }
-
-    //  Borrar un álbum
-    // Ruta: GET /albums/borrar/{id}
     @GetMapping("/borrar/{id}")
     public String borrarAlbum(@PathVariable Long id) {
-        albumRepository.deleteById(id);
+        albumService.eliminar(id);
         return "redirect:/albums";
     }
 }
