@@ -1,7 +1,7 @@
 # CRUD MVC con Thymeleaf — RA3
 
 ## 1) Datos del alumno/a
-- Peliculas
+- Musica
 
 ## 2) Repositorio (fork) y gestión de versiones
 - Repositorio base: https://github.com/profeInformatica101/tareasSpringBoot
@@ -12,7 +12,7 @@
 Explica brevemente cómo has organizado:
 - Controller:
 - Service:
-- Repository: ****
+- Repository:
 - Entity:
 
 ## 4) Base de datos elegida (marca una)
@@ -79,24 +79,22 @@ spring.jpa.database-platform=org.hibernate.dialect.MySQL8Dialect
 
 
 ## 6) Cómo ejecutar el proyecto
-1. Requisitos (Java versión, Maven/Gradle, DB instalada si aplica)
+1. Requisitos ()
 2. Comando de arranque:
-   - ./mvnw spring-boot:run   (o equivalente)
 3. URL de acceso:
-   - http://localhost:8080/...
+   - http://localhost:8080/albums
 
 ## 7) Pantallas / Rutas MVC
-- GET /entidad (listar)
-- GET /entidad/nuevo (formulario alta)
-- POST /entidad (crear)
-- GET /entidad/{id}/editar (editar)
-- POST /entidad/{id} (actualizar)
-- POST /entidad/{id}/borrar (eliminar)
+- GET /entidad (listar) -> GET /albums
+- GET /entidad/nuevo (formulario alta) -> GET /albums/nuevo
+- GET /entidad/{id}/editar (editar) -> GET /albums/editar/{id}
+- POST /entidad/{id}/borrar (eliminar) -> GET /albums/borrar/{id}
+- POST /entidad/{id}/guardar (guardar) ->  GET /albums/borrar/{id}
 
 
 ## 8) Mejoras extra (opcional)
 - Validaciones
-- Estilos Bootstrap
+- Estilos Bootstrap ✔️
 - Búsqueda
 - Pruebas
 - Paginación
