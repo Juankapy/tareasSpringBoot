@@ -16,14 +16,11 @@ public class Album {
 
     // Relación: Un álbum tiene muchas canciones
     // 'mappedBy' debe coincidir con el nombre de la variable en Cancion.java
-    // cascade = ALL permite que si borras el álbum, se borren sus canciones
     @OneToMany(mappedBy = "album", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Cancion> canciones;
 
-    // CONSTRUCTOR VACÍO
     public Album() {}
 
-    // GETTERS Y SETTERS
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getTitulo() { return titulo; }

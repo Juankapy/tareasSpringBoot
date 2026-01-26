@@ -6,6 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,21 +20,27 @@ public class AlbumController {
     @Autowired
     private AlbumService albumService;
     @GetMapping
-    public String listar(@RequestParam(value = "texto", required = false) String texto, Model model) {
-        List<Album> todosLosDiscos = albumService.listarTodos();
+    public String listar(@RequestParam(value = "texto", required = false) String texto,
+                         @RequestParam(value = "page", required = false, defaultValue = "0") int page,
+                         @RequestParam(value = "size", required = false, defaultValue = "5") int size,
+                         Model model) {
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Album> pageAlbums;
+
         if (texto == null || texto.isEmpty()) {
-            model.addAttribute("listaAlbums", todosLosDiscos);
-            return "lista_albums";
-        }
-        List<Album> listaFiltrada = new ArrayList<>();
-
-        for (Album album : todosLosDiscos) {
-            if (album.getTitulo().toLowerCase().contains(texto.toLowerCase())) {
-                listaFiltrada.add(album);
-            }
+            pageAlbums = albumService.listarPaginado(pageable);
+        } else {
+            pageAlbums = albumService.buscarPorTituloPaginado(texto, pageable);
+            model.addAttribute("texto", texto);
         }
 
-        model.addAttribute("listaAlbums", listaFiltrada);
+        model.addAttribute("listaAlbums", pageAlbums.getContent());
+        model.addAttribute("currentPage", pageAlbums.getNumber());
+        model.addAttribute("totalPages", pageAlbums.getTotalPages());
+        model.addAttribute("totalItems", pageAlbums.getTotalElements());
+        model.addAttribute("pageSize", pageAlbums.getSize());
+
         return "lista_albums";
     }
 

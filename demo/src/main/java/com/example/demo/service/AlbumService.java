@@ -1,34 +1,24 @@
 package com.example.demo.service;
 
 import com.example.demo.modelo.Album;
-import com.example.demo.repository.AlbumRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import java.util.List;
 
-@Service
-public class AlbumService {
+public interface AlbumService {
 
-    @Autowired
-    private AlbumRepository albumRepository;
+    List<Album> listarTodos();
 
-    public List<Album> listarTodos() {
-        return albumRepository.findAll();
-    }
+    List<Album> buscarPorTitulo(String texto);
 
-    public List<Album> buscarPorTitulo(String texto) {
-        return albumRepository.findByTituloContainingIgnoreCase(texto);
-    }
+    void guardar(Album album);
 
-    public void guardar(Album album) {
-        albumRepository.save(album);
-    }
+    Album buscarPorId(Long id);
 
-    public Album buscarPorId(Long id) {
-        return albumRepository.findById(id).orElse(null);
-    }
+    void eliminar(Long id);
 
-    public void eliminar(Long id) {
-        albumRepository.deleteById(id);
-    }
+    Page<Album> listarPaginado(Pageable pageable);
+
+    Page<Album> buscarPorTituloPaginado(String texto, Pageable pageable);
 }
