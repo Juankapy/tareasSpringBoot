@@ -9,8 +9,9 @@ import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/generos")
-public class GeneroController {
+public class    GeneroController {
 
+    
     @Autowired
     private GeneroService generoService;
 

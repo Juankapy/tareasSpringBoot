@@ -55,36 +55,66 @@
 
 
 
-    <a th:href="@{/albums/nuevo}" class="btn btn-primary mb-3">Nuevo Álbum</a>
+    <div class="mb-3">
+        <a th:if="${!isGenresPage}" th:href="@{/albums/nuevo}" class="btn btn-primary">Nuevo Álbum</a>
+        <a th:if="${!isGenresPage}" th:href="@{/albums(page=1)}" class="btn btn-secondary ms-2">Géneros</a>
+
+        <a th:if="${isGenresPage}" th:href="@{/generos/nuevo}" class="btn btn-primary">Nuevo Género</a>
+        <a th:if="${isGenresPage}" th:href="@{/albums(page=0)}" class="btn btn-secondary ms-2">Ver Albums</a>
+    </div>
 
     <div class="card shadow">
         <div class="card-body">
-            <table class="table table-striped table-hover">
-                <thead class="table-dark">
-                <tr>
-                    <th>Título</th>
-                    <th>Artista</th>
-                    <th>Género</th>
-                    <th>Acciones</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="album : ${listaAlbums}">
-                    <td th:text="${album.titulo}">Nombre del Album</td>
-                    <td th:text="${album.artista}">Artista</td>
-                    <td th:text="${album.genero}">Rock</td>
-                    <td>
-                        <a th:href="@{/albums/editar/{id}(id=${album.id})}" class="btn btn-warning btn-sm">Editar</a>
-                        <a th:href="@{/albums/borrar/{id}(id=${album.id})}"
-                           class="btn btn-danger btn-sm"
-                           onclick="return confirm('¿Estás seguro de borrar este álbum?')">Borrar</a>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
 
-            <div th:if="${#lists.isEmpty(listaAlbums)}" class="alert alert-info">
-                No hay álbumes todavía.
+            <!-- Si isGenresPage, mostramos géneros en lugar de albums -->
+            <div th:if="${isGenresPage}">
+                <h5>Lista de Géneros</h5>
+                <table class="table table-striped table-hover">
+                    <thead class="table-dark">
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Acciones</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="g : ${listaGeneros}">
+                        <td th:text="${g.nombre}">Género</td>
+                        <td>
+                            <a th:href="@{/generos/borrar/{id}(id=${g.id})}" class="btn btn-danger btn-sm" onclick="return confirm('¿Seguro que desea borrar este género?')">Borrar</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div th:unless="${isGenresPage}">
+                <table class="table table-striped table-hover">
+                    <thead class="table-dark">
+                    <tr>
+                        <th>Título</th>
+                        <th>Artista</th>
+                        <th>Género</th>
+                        <th>Acciones</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="album : ${listaAlbums}">
+                        <td th:text="${album.titulo}">Nombre del Album</td>
+                        <td th:text="${album.artista}">Artista</td>
+                        <td th:text="${album.genero}">Rock</td>
+                        <td>
+                            <a th:href="@{/albums/editar/{id}(id=${album.id})}" class="btn btn-warning btn-sm">Editar</a>
+                            <a th:href="@{/albums/borrar/{id}(id=${album.id})}"
+                               class="btn btn-danger btn-sm"
+                               onclick="return confirm('¿Estás seguro de borrar este álbum?')">Borrar</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+
+                <div th:if="${#lists.isEmpty(listaAlbums)}" class="alert alert-info">
+                    No hay álbumes todavía.
+                </div>
             </div>
 
             <!-- Pagination controls -->
@@ -92,6 +122,7 @@
                 <div>
                     <form id="sizeForm" action="/albums" method="get" class="d-flex align-items-center">
                         <input type="hidden" name="texto" th:value="${texto}" />
+                        <input type="hidden" name="page" th:value="${currentPage}" />
                         <label for="sizeSelect" class="me-2 mb-0">Mostrar:</label>
                         <select id="sizeSelect" name="size" class="form-select form-select-sm" style="width: auto;" onchange="document.getElementById('sizeForm').submit()">
                             <option th:value="5" th:selected="${pageSize==5}">5</option>
