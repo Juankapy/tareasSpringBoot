@@ -1,3 +1,4 @@
+// language: java
 package com.example.demo.controlador;
 
 import com.example.demo.modelo.Album;
@@ -20,13 +21,13 @@ public class AlbumController {
 
     @Autowired
     private GeneroService generoService;
+
     @GetMapping
     public String listar(@RequestParam(value = "texto", required = false) String texto,
                          @RequestParam(value = "page", required = false, defaultValue = "0") int page,
                          @RequestParam(value = "size", required = false, defaultValue = "5") int size,
                          Model model) {
 
-        // calculamos total de páginas de albums según size, respetando filtro de texto si existe
         Pageable pageableForTotal = PageRequest.of(0, size);
         Page<Album> albumPageForTotals;
         if (texto == null || texto.isEmpty()) {
@@ -36,15 +37,15 @@ public class AlbumController {
         }
         int albumTotalPages = albumPageForTotals.getTotalPages();
 
-        // Insertamos una página EXTRA en la segunda posición (índice 1) para mostrar géneros
-        int displayedTotalPages = Math.max(albumTotalPages, 1) + 1; // asegurar al menos 2 páginas visibles (albums + géneros)
+        int displayedTotalPages = Math.max(albumTotalPages, 1) + 1;
 
         model.addAttribute("pageSize", size);
         model.addAttribute("totalItems", albumPageForTotals.getTotalElements());
         model.addAttribute("totalPages", displayedTotalPages);
         model.addAttribute("currentPage", page);
 
-        // Si la página solicitada es la segunda página visible (page == 1), mostramos solo los géneros
+        model.addAttribute("isGenresPage", false);
+
         if (page == 1) {
             model.addAttribute("isGenresPage", true);
             model.addAttribute("listaGeneros", generoService.listarTodos());
@@ -54,8 +55,7 @@ public class AlbumController {
             return "lista_albums";
         }
 
-        // Mapear el page solicitado a la página real de albums
-        int pageIndexForAlbums = (page > 1) ? (page - 1) : page; // si page>1, restamos 1
+        int pageIndexForAlbums = (page > 1) ? (page - 1) : page;
         if (pageIndexForAlbums < 0) pageIndexForAlbums = 0;
 
         Pageable pageable = PageRequest.of(pageIndexForAlbums, size);
@@ -69,7 +69,6 @@ public class AlbumController {
         }
 
         model.addAttribute("listaAlbums", pageAlbums.getContent());
-        // currentPage ya está puesto según la página visible solicitada
         return "lista_albums";
     }
 
@@ -83,7 +82,8 @@ public class AlbumController {
     @PostMapping("/guardar")
     public String guardarAlbum(@ModelAttribute Album album) {
         albumService.guardar(album);
-        return "redirect:/albums";
+        // redirige a la página principal de albums (página 0)
+        return "redirect:/albums?page=0";
     }
 
     @GetMapping("/editar/{id}")

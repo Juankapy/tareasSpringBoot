@@ -1,3 +1,4 @@
+// language: java
 package com.example.demo.controlador;
 
 import com.example.demo.modelo.Genero;
@@ -9,17 +10,10 @@ import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/generos")
-public class    GeneroController {
+public class GeneroController {
 
-    
     @Autowired
     private GeneroService generoService;
-
-    @GetMapping
-    public String listar(Model model) {
-        model.addAttribute("listaGeneros", generoService.listarTodos());
-        return "lista_generos";
-    }
 
     @GetMapping("/nuevo")
     public String mostrarFormulario(Model model) {
@@ -28,14 +22,9 @@ public class    GeneroController {
     }
 
     @PostMapping("/guardar")
-    public String guardar(@ModelAttribute Genero genero) {
+    public String guardarGenero(@ModelAttribute Genero genero) {
         generoService.guardar(genero);
-        return "redirect:/generos";
-    }
-
-    @GetMapping("/borrar/{id}")
-    public String borrar(@PathVariable Long id) {
-        generoService.eliminar(id);
-        return "redirect:/generos";
+        // redirige a la "página de géneros" dentro del paginador de albums (page=1)
+        return "redirect:/albums?page=1";
     }
 }
