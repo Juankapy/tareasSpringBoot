@@ -22,11 +22,9 @@
           <li class="nav-item"><a class="nav-link" th:href="@{/albums}">Álbumes</a></li>
           <li class="nav-item"><a class="nav-link active" th:href="@{/generos}">Géneros</a></li>
        </ul>
-       <div class="d-flex" sec:authorize="isAuthenticated()">
-          <span class="navbar-text me-3">Hola, <span sec:authentication="name">User</span></span>
-          <form th:action="@{/logout}" method="post">
-             <button class="btn btn-outline-light btn-sm" type="submit">Salir</button>
-          </form>
+       <div class="d-flex align-items-center text-white">
+          <div th:replace="~{fragmentos/usuario :: usuario}" class="me-3"></div>
+          <div th:replace="~{fragmentos/logout :: logout}"></div>
        </div>
     </div>
   </div>
