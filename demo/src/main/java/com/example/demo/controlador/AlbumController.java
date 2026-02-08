@@ -1,4 +1,3 @@
-// language: java
 package com.example.demo.controlador;
 
 import com.example.demo.modelo.Album;
@@ -28,37 +27,7 @@ public class AlbumController {
                          @RequestParam(value = "size", required = false, defaultValue = "5") int size,
                          Model model) {
 
-        Pageable pageableForTotal = PageRequest.of(0, size);
-        Page<Album> albumPageForTotals;
-        if (texto == null || texto.isEmpty()) {
-            albumPageForTotals = albumService.listarPaginado(pageableForTotal);
-        } else {
-            albumPageForTotals = albumService.buscarPorTituloPaginado(texto, pageableForTotal);
-        }
-        int albumTotalPages = albumPageForTotals.getTotalPages();
-
-        int displayedTotalPages = Math.max(albumTotalPages, 1) + 1;
-
-        model.addAttribute("pageSize", size);
-        model.addAttribute("totalItems", albumPageForTotals.getTotalElements());
-        model.addAttribute("totalPages", displayedTotalPages);
-        model.addAttribute("currentPage", page);
-
-        model.addAttribute("isGenresPage", false);
-
-        if (page == 1) {
-            model.addAttribute("isGenresPage", true);
-            model.addAttribute("listaGeneros", generoService.listarTodos());
-            if (texto != null && !texto.isEmpty()) {
-                model.addAttribute("texto", texto);
-            }
-            return "lista_albums";
-        }
-
-        int pageIndexForAlbums = (page > 1) ? (page - 1) : page;
-        if (pageIndexForAlbums < 0) pageIndexForAlbums = 0;
-
-        Pageable pageable = PageRequest.of(pageIndexForAlbums, size);
+        Pageable pageable = PageRequest.of(page, size);
         Page<Album> pageAlbums;
 
         if (texto == null || texto.isEmpty()) {
@@ -68,7 +37,7 @@ public class AlbumController {
             model.addAttribute("texto", texto);
         }
 
-        model.addAttribute("listaAlbums", pageAlbums.getContent());
+        model.addAttribute("listado", pageAlbums);
         return "lista_albums";
     }
 
@@ -82,8 +51,7 @@ public class AlbumController {
     @PostMapping("/guardar")
     public String guardarAlbum(@ModelAttribute Album album) {
         albumService.guardar(album);
-        // redirige a la página principal de albums (página 0)
-        return "redirect:/albums?page=0";
+        return "redirect:/albums";
     }
 
     @GetMapping("/editar/{id}")

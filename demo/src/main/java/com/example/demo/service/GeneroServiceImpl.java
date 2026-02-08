@@ -3,6 +3,8 @@ package com.example.demo.service;
 import com.example.demo.modelo.Genero;
 import com.example.demo.repository.GeneroRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,6 +18,11 @@ public class GeneroServiceImpl implements GeneroService {
     @Override
     public List<Genero> listarTodos() {
         return generoRepository.findAll();
+    }
+
+    @Override
+    public Page<Genero> listarPaginado(Pageable pageable) {
+        return generoRepository.findAll(pageable);
     }
 
     @Override

@@ -1,15 +1,43 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title>Lista de Géneros</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css">
+    <style>
+        .form-control-borderless { border: none; }
+        .form-control-borderless:hover, .form-control-borderless:active, .form-control-borderless:focus {
+            border: none; outline: none; box-shadow: none;
+        }
+    </style>
 </head>
 <body class="bg-light">
-<div class="container mt-5">
-    <h1 class="mb-4">Géneros</h1>
 
-    <a th:href="@{/generos/nuevo}" class="btn btn-primary mb-3">Nuevo Género</a>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+  <div class="container">
+    <a class="navbar-brand" href="#">Música App</a>
+    <div class="collapse navbar-collapse">
+       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link" th:href="@{/albums}">Álbumes</a></li>
+          <li class="nav-item"><a class="nav-link active" th:href="@{/generos}">Géneros</a></li>
+       </ul>
+       <div class="d-flex" sec:authorize="isAuthenticated()">
+          <span class="navbar-text me-3">Hola, <span sec:authentication="name">User</span></span>
+          <form th:action="@{/logout}" method="post">
+             <button class="btn btn-outline-light btn-sm" type="submit">Salir</button>
+          </form>
+       </div>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+    <h1 class="mb-4">Mis Géneros</h1>
+
+    <div class="mb-3">
+        <a th:href="@{/generos/nuevo}" class="btn btn-primary">Nuevo Género</a>
+    </div>
 
     <div class="card shadow">
         <div class="card-body">
@@ -21,22 +49,31 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="genero : ${listaGeneros}">
-                    <td th:text="${genero.nombre}">Nombre</td>
+                <tr th:each="g : ${listado}">
+                    <td th:text="${g.nombre}">Género</td>
                     <td>
-                        <form th:action="@{/generos/borrar/{id}(id=${genero.id})}" method="get" style="display:inline" onsubmit="return confirm('¿Seguro que desea borrar este género?');">
-                            <button class="btn btn-danger btn-sm" type="submit">Borrar</button>
-                        </form>
+                        <!-- Acciones si se implementan -->
                     </td>
                 </tr>
                 </tbody>
             </table>
-
-            <div th:if="${#lists.isEmpty(listaGeneros)}" class="alert alert-info">
-                No hay géneros todavía.
-            </div>
         </div>
     </div>
+
+    <nav aria-label="Page navigation" class="mt-4" th:if="${listado.totalPages > 0}">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${listado.first} ? 'disabled'">
+                <a class="page-link" th:href="@{/generos(page=${listado.number - 1})}" tabindex="-1">Anterior</a>
+            </li>
+            <li class="page-item" th:each="i : ${#numbers.sequence(0, listado.totalPages - 1)}"
+                th:classappend="${listado.number == i} ? 'active'">
+                <a class="page-link" th:href="@{/generos(page=${i})}" th:text="${i + 1}">1</a>
+            </li>
+            <li class="page-item" th:classappend="${listado.last} ? 'disabled'">
+                <a class="page-link" th:href="@{/generos(page=${listado.number + 1})}">Siguiente</a>
+            </li>
+        </ul>
+    </nav>
 </div>
 </body>
 </html>
